@@ -16,17 +16,23 @@ def index():
 
 @app.route('/add', methods=['POST'])
 def add():
-    product = float(request.form['product'])
+    venta_total = float(request.form['product'])  # Precio que cobraste al cliente por unidad
     flash = float(request.form['flash'])
     install = float(request.form['install'])
     cantidad = int(request.form.get('cantidad', 1))
-    sub = '✅' if request.form.get('sub') else '—'
     tag = request.form['tag']
-    
-    total = (product + flash + install) * cantidad
-    cost = (product + flash) * cantidad
+    sub_included = request.form.get('sub')
+    sub = '✅' if sub_included else '—'
+
+    # Costos internos
+    product_cost = 191.94
+    sub_cost = 20.0 if sub_included else 0.0
+    cost_unitario = product_cost + sub_cost
+    total_cost = cost_unitario * cantidad
+
+    total = venta_total * cantidad
     fee = round(total * 0.054 + 0.3, 2)
-    profit = round(total - cost - fee, 2)
+    profit = round(total - total_cost - fee, 2)
 
     sales.append({
         'install': install,
@@ -35,7 +41,7 @@ def add():
         'cantidad': cantidad,
         'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         'total': round(total, 2),
-        'cost': round(cost, 2),
+        'cost': round(total_cost, 2),
         'fee': fee,
         'profit': profit
     })
