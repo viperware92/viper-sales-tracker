@@ -24,14 +24,20 @@ def add():
     sub = 1 if 'sub' in request.form else 0
     tag = request.form['tag']
 
-    cost = product * cantidad
+    # Costo del producto (solo el producto base)
+    costo_producto = 191.94
+    cost = costo_producto * cantidad
     venta = 468 * cantidad
     fee = 0
     sub_income = sub * 29
     sub_cost = sub * 20
+    ganancia_sub = sub_income - sub_cost
 
+    # El total que se cobra incluye todo lo que se le cobra al cliente
     total = venta + flash + install + sub_income
-    profit = total - cost - sub_cost - fee
+
+    # La ganancia real solo se le resta el costo del producto y de la sub (flash e install ya son 100% tuyos)
+    profit = (venta - cost) + flash + install + ganancia_sub
 
     sales.append({
         'product': product,
