@@ -26,11 +26,12 @@ def add():
 
     # Costos internos
     product_cost = 191.94
+    shipping_cost = 35.14  # incluido en el producto entregado
     sub_cost = 20.0 if sub_included else 0.0
-    cost_unitario = product_cost + sub_cost
+    cost_unitario = product_cost + shipping_cost + sub_cost
     total_cost = cost_unitario * cantidad
 
-    total = venta_total * cantidad
+    total = (venta_total + flash + install + (29.0 if sub_included else 0.0)) * cantidad
     fee = round(total * 0.054 + 0.3, 2)
     profit = round(total - total_cost - fee, 2)
 
@@ -43,7 +44,10 @@ def add():
         'total': round(total, 2),
         'cost': round(total_cost, 2),
         'fee': fee,
-        'profit': profit
+        'profit': profit,
+        'flash': flash,
+        'venta': venta_total,
+        'sub_price': 29.0 if sub_included else 0.0
     })
     return redirect('/')
 
@@ -57,7 +61,7 @@ def delete(index):
 def export():
     filename = 'sales_export.csv'
     with open(filename, 'w', newline='') as csvfile:
-        fieldnames = ['install', 'sub', 'tag', 'timestamp', 'cantidad', 'total', 'cost', 'fee', 'profit']
+        fieldnames = ['install', 'sub', 'tag', 'timestamp', 'cantidad', 'total', 'cost', 'fee', 'profit', 'flash', 'venta', 'sub_price']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for s in sales:
