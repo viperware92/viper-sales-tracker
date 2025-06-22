@@ -1,113 +1,63 @@
+# templates/index.html
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ 'es' if lang == 'es' else 'en' }}">
 <head>
-  <meta charset="UTF-8" />
-  <title>VIPER DMA Sales Tracker</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <title>VIPER DMA SALES TRACKER</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #0f111a; color: white; }
+        .card { background-color: #1c1e2a; border: none; color: white; }
+        .btn-yellow { background-color: #ffd500; border: none; color: black; font-weight: bold; }
+        .table-dark th, .table-dark td { color: white; }
+        .switch-lang { position: absolute; top: 10px; right: 20px; }
+    </style>
 </head>
-<body class="bg-gray-900 text-white p-6">
-  <div class="max-w-6xl mx-auto space-y-6">
-    <h1 class="text-3xl font-bold text-yellow-400">⚡ VIPER DMA SALES TRACKER</h1>
-
-    <!-- Totales -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-      <div class="bg-gray-800 p-4 rounded text-center">
-        <p class="text-sm text-gray-400">Ganancias Totales</p>
-        <p class="text-xl text-green-400">${{ profit }}</p>
-      </div>
-      <div class="bg-gray-800 p-4 rounded text-center">
-        <p class="text-sm text-gray-400">Ingresos Totales</p>
-        <p class="text-xl text-blue-400">${{ income }}</p>
-      </div>
-      <div class="bg-gray-800 p-4 rounded text-center">
-        <p class="text-sm text-gray-400">Costo Total</p>
-        <p class="text-xl text-red-400">${{ cost }}</p>
-      </div>
-      <div class="bg-gray-800 p-4 rounded text-center">
-        <p class="text-sm text-gray-400">Flash Total</p>
-        <p class="text-xl text-yellow-300">${{ flash }}</p>
-      </div>
-      <div class="bg-gray-800 p-4 rounded text-center">
-        <p class="text-sm text-gray-400">Install Total</p>
-        <p class="text-xl text-yellow-300">${{ install }}</p>
-      </div>
-      <div class="bg-gray-800 p-4 rounded text-center">
-        <p class="text-sm text-gray-400">Ganancia Sub</p>
-        <p class="text-xl text-yellow-300">${{ sub_profit }}</p>
-      </div>
+<body>
+<div class="container py-4">
+    <div class="switch-lang">
+        <a href="?lang={{ 'en' if lang == 'es' else 'es' }}" class="btn btn-sm btn-outline-light">
+            {{ 'EN' if lang == 'es' else 'ES' }}
+        </a>
     </div>
-
-    <!-- Formulario -->
-    <form method="POST" action="/add" class="bg-gray-800 p-4 rounded-xl space-y-4">
-      <h2 class="text-xl font-semibold text-white">Añadir venta</h2>
-
-      <input name="product" type="number" step="0.01" placeholder="Costo producto ($)" required class="w-full p-2 rounded bg-gray-700 text-white" />
-
-      <input name="flash" type="number" step="0.01" placeholder="Flash fee ($)" required class="w-full p-2 rounded bg-gray-700 text-white" />
-
-      <input name="install" type="number" step="0.01" placeholder="Instalación ($)" required class="w-full p-2 rounded bg-gray-700 text-white" />
-
-      <input name="cantidad" type="number" min="1" value="1" placeholder="Cantidad" required class="w-full p-2 rounded bg-gray-700 text-white" />
-
-      <label class="inline-flex items-center">
-        <input name="sub" type="checkbox" class="mr-2">
-        Incluye suscripción
-      </label>
-
-      <input name="tag" type="text" placeholder="Etiqueta" class="w-full p-2 rounded bg-gray-700 text-white" />
-
-      <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-black w-full py-2 rounded font-semibold">Añadir Venta</button>
+    <h1 class="mb-4">⚡ VIPER DMA SALES TRACKER</h1>
+    <div class="row text-center mb-4">
+        <div class="col"><div class="card p-3">{{ 'Ganancias Totales' if lang == 'es' else 'Total Profit' }}<br><strong>${{ profit }}</strong></div></div>
+        <div class="col"><div class="card p-3">{{ 'Ingresos Totales' if lang == 'es' else 'Total Income' }}<br><strong>${{ income }}</strong></div></div>
+        <div class="col"><div class="card p-3">{{ 'Costo Total' if lang == 'es' else 'Total Cost' }}<br><strong style="color:#f66">${{ cost }}</strong></div></div>
+    </div>
+    <form action="/add" method="post" class="card p-4 mb-4">
+        <h4>{{ 'Añadir venta' if lang == 'es' else 'Add Sale' }}</h4>
+        <input type="number" step="any" name="product" class="form-control mb-2" placeholder="{{ 'Costo producto ($)' if lang == 'es' else 'Product cost ($)' }}">
+        <input type="number" step="any" name="flash" class="form-control mb-2" placeholder="Flash fee ($)">
+        <input type="number" step="any" name="install" class="form-control mb-2" placeholder="{{ 'Instalación ($)' if lang == 'es' else 'Installation ($)' }}">
+        <input type="number" name="cantidad" class="form-control mb-2" placeholder="Cantidad" value="1">
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" name="sub">
+            <label class="form-check-label">{{ 'Incluye suscripción' if lang == 'es' else 'Includes subscription' }}</label>
+        </div>
+        <input type="text" name="tag" class="form-control mb-2" placeholder="{{ 'Etiqueta' if lang == 'es' else 'Label' }}">
+        <button class="btn btn-yellow w-100">{{ 'Añadir Venta' if lang == 'es' else 'Add Sale' }}</button>
     </form>
-
-    <!-- Tabla de ventas -->
-    <div class="overflow-x-auto mt-6">
-      <table class="w-full text-sm text-left text-gray-300">
-        <thead class="bg-gray-700 text-xs uppercase">
-          <tr>
-            <th class="px-4 py-2">Fecha</th>
-            <th class="px-4 py-2">Cant.</th>
-            <th class="px-4 py-2">Flash</th>
-            <th class="px-4 py-2">Install</th>
-            <th class="px-4 py-2">Sub</th>
-            <th class="px-4 py-2">Tag</th>
-            <th class="px-4 py-2">Venta</th>
-            <th class="px-4 py-2">Costo</th>
-            <th class="px-4 py-2">Sub Ganancia</th>
-            <th class="px-4 py-2">Total</th>
-            <th class="px-4 py-2">Ganancia</th>
-            <th class="px-4 py-2">✘</th>
-          </tr>
+    <table class="table table-dark table-bordered text-center">
+        <thead>
+        <tr>
+            <th>{{ 'FECHA' if lang == 'es' else 'DATE' }}</th>
+            <th>CANT.</th><th>FLASH</th><th>INSTALL</th><th>SUB</th><th>TAG</th><th>{{ 'VENTA' if lang == 'es' else 'SALE' }}</th>
+            <th>COSTO</th><th>SUB GANANCIA</th><th>TOTAL</th><th>{{ 'GANANCIA' if lang == 'es' else 'PROFIT' }}</th><th>X</th>
+        </tr>
         </thead>
         <tbody>
-          {% for s in sales %}
-          <tr class="bg-gray-800 border-b border-gray-700">
-            <td class="px-4 py-2">{{ s.timestamp }}</td>
-            <td class="px-4 py-2">{{ s.cantidad }}</td>
-            <td class="px-4 py-2">${{ s.flash }}</td>
-            <td class="px-4 py-2">${{ s.install }}</td>
-            <td class="px-4 py-2">{{ s.sub }}</td>
-            <td class="px-4 py-2">{{ s.tag }}</td>
-            <td class="px-4 py-2">${{ s.venta }}</td>
-            <td class="px-4 py-2">${{ s.cost }}</td>
-            <td class="px-4 py-2">${{ s.ganancia_sub }}</td>
-            <td class="px-4 py-2">${{ s.total }}</td>
-            <td class="px-4 py-2">${{ s.profit }}</td>
-            <td class="px-4 py-2">
-              <form method="POST" action="/delete/{{ loop.index0 }}">
-                <button class="text-red-400 hover:text-red-600">✘</button>
-              </form>
-            </td>
-          </tr>
-          {% endfor %}
+        {% for s in sales %}
+        <tr>
+            <td>{{ s.timestamp }}</td><td>{{ s.cantidad }}</td><td>{{ s.flash }}</td><td>{{ s.install }}</td><td>{{ s.sub }}</td><td>{{ s.tag }}</td>
+            <td>{{ s.venta }}</td><td>{{ s.cost }}</td><td>{{ s.ganancia_sub }}</td><td>{{ s.total }}</td><td>{{ s.profit }}</td>
+            <td><form action="/delete/{{ loop.index0 }}" method="post"><button class="btn btn-sm btn-danger">X</button></form></td>
+        </tr>
+        {% endfor %}
         </tbody>
-      </table>
-    </div>
-
-    <!-- Export -->
-    <div class="text-center mt-6">
-      <a href="/export" class="text-yellow-400 hover:underline">Exportar CSV</a>
-    </div>
-  </div>
+    </table>
+    <a href="/export" class="btn btn-outline-warning">{{ 'Exportar CSV' if lang == 'es' else 'Export CSV' }}</a>
+</div>
 </body>
 </html>

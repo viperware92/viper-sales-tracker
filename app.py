@@ -9,6 +9,7 @@ app = Flask(__name__)
 
 sales = []
 
+
 def calcular_totales():
     totales = defaultdict(float)
     for s in sales:
@@ -20,10 +21,13 @@ def calcular_totales():
         totales['sub_profit'] += s['ganancia_sub']
     return {k: round(v, 2) for k, v in totales.items()}
 
+
 @app.route("/")
 def index():
+    lang = request.args.get('lang', 'es')
     totales = calcular_totales()
-    return render_template("index.html", sales=sales, **totales)
+    return render_template("index.html", sales=sales, lang=lang, **totales)
+
 
 @app.route("/add", methods=["POST"])
 def add():
@@ -66,11 +70,13 @@ def add():
     })
     return redirect("/")
 
+
 @app.route("/delete/<int:index>", methods=["POST"])
 def delete(index):
     if 0 <= index < len(sales):
         sales.pop(index)
     return redirect("/")
+
 
 @app.route("/export")
 def export():
@@ -81,6 +87,7 @@ def export():
         writer.writerow([s['product'], s['flash'], s['install'], s['cantidad'], s['sub'], s['tag'], s['timestamp'], s['venta'], s['total'], s['cost'], s['fee'], s['profit'], s['ganancia_sub']])
     output.seek(0)
     return send_file(io.BytesIO(output.getvalue().encode()), mimetype='text/csv', as_attachment=True, download_name='ventas.csv')
+
 
 if __name__ == "__main__":
     app.run(debug=True)
