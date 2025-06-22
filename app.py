@@ -1,82 +1,69 @@
+# app.py
 from flask import Flask, render_template, request, redirect, send_file
 from datetime import datetime
 import csv
-import os
-import json
+import io
 
 app = Flask(__name__)
 
-DATA_FILE = 'sales.json'
+sales = []
 
-# Load or initialize data
-def load_sales():
-    if os.path.exists(DATA_FILE):
-        with open(DATA_FILE, 'r') as f:
-            return json.load(f)
-    return []
-
-def save_sales(sales):
-    with open(DATA_FILE, 'w') as f:
-        json.dump(sales, f, indent=4)
-
-sales = load_sales()
-
-@app.route('/')
+@app.route("/")
 def index():
-    total_income = sum(s['total'] for s in sales)
     total_profit = sum(s['profit'] for s in sales)
-    return render_template('index.html', sales=sales, total_income=round(total_income, 2), total_profit=round(total_profit, 2))
+    total_income = sum(s['total'] for s in sales)
+    total_cost = sum(s['cost'] for s in sales)
+    return render_template("index.html", sales=sales, total_profit=round(total_profit, 2), total_income=round(total_income, 2), total_cost=round(total_cost, 2))
 
-@app.route('/add', methods=['POST'])
+@app.route("/add", methods=["POST"])
 def add():
     product = float(request.form['product'])
     flash = float(request.form['flash'])
-    cantidad = int(request.form['cantidad'])
     install = float(request.form['install'])
-    sub = '✔' if 'sub' in request.form else '✘'
+    cantidad = int(request.form['cantidad'])
+    sub = 1 if 'sub' in request.form else 0
     tag = request.form['tag']
 
-    # Sub price logic
-    sub_price = 29 if sub == '✔' else 0
-    sub_cost = 20 if sub == '✔' else 0
-    sub_profit = sub_price - sub_cost
+    cost = product * cantidad
+    venta = 468 * cantidad
+    fee = 0
+    sub_income = sub * 29
+    sub_cost = sub * 20
 
-    # Total ingresado por venta (producto * cantidad + servicios)
-    total = (product * cantidad) + flash + install + sub_price
-
-    # Ganancia total es igual a total ingresado - costo base (solo el costo de sub si se incluye)
-    profit = total - (sub_cost)
+    total = venta + flash + install + sub_income
+    profit = total - cost - sub_cost - fee
 
     sales.append({
-        'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M'),
-        'venta': product,
+        'product': product,
         'flash': flash,
         'install': install,
-        'sub': sub,
-        'tag': tag,
         'cantidad': cantidad,
+        'sub': '✔' if sub else '✘',
+        'tag': tag,
+        'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        'venta': venta,
         'total': round(total, 2),
-        'profit': round(profit, 2)
+        'cost': round(cost + sub_cost, 2),
+        'fee': fee,
+        'profit': round(profit, 2),
     })
+    return redirect("/")
 
-    save_sales(sales)
-    return redirect('/')
-
-@app.route('/delete/<int:index>', methods=['POST'])
+@app.route("/delete/<int:index>", methods=["POST"])
 def delete(index):
     if 0 <= index < len(sales):
         sales.pop(index)
-        save_sales(sales)
-    return redirect('/')
+    return redirect("/")
 
-@app.route('/export')
+@app.route("/export")
 def export():
-    filepath = 'sales_export.csv'
-    with open(filepath, 'w', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=sales[0].keys())
-        writer.writeheader()
-        writer.writerows(sales)
-    return send_file(filepath, as_attachment=True)
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["Product", "Flash", "Install", "Cantidad", "Sub", "Tag", "Date", "Venta", "Total", "Cost", "Fee", "Profit"])
+    for s in sales:
+        writer.writerow([s['product'], s['flash'], s['install'], s['cantidad'], s['sub'], s['tag'], s['timestamp'], s['venta'], s['total'], s['cost'], s['fee'], s['profit']])
+    output.seek(0)
+    return send_file(io.BytesIO(output.getvalue().encode()), mimetype='text/csv', as_attachment=True, download_name='ventas.csv')
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
