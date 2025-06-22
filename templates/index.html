@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>VIPER DMA Sales Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #0f0f0f;
+      color: #f0f0f0;
+    }
+    h1 {
+      color: #ffd700;
+      margin-bottom: 20px;
+    }
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+      background: #1a1a1a;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    input, button, label {
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+    input[type="text"],
+    input[type="number"] {
+      background-color: #2a2a2a;
+      color: white;
+      width: 150px;
+    }
+    label {
+      color: #aaa;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    button {
+      background-color: #ffd700;
+      color: #0f0f0f;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ffcc00;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #333;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #222;
+    }
+    tr:nth-child(even) {
+      background-color: #1b1b1b;
+    }
+    .summary {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .export {
+      margin-top: 10px;
+      display: inline-block;
+      color: #ffd700;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>VIPER DMA – Sales Tracker</h1>
+
+  <form method="POST" action="/add">
+    <input type="number" name="product" step="0.01" placeholder="Product" required>
+    <input type="number" name="flash" step="0.01" placeholder="Flash" required>
+    <input type="number" name="install" step="0.01" placeholder="Install" required>
+    <label><input type="checkbox" name="sub"> Sub</label>
+    <input type="text" name="tag" placeholder="Tag (e.g., Client)">
+    <button type="submit">Add Sale</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Product</th><th>Flash</th><th>Install</th><th>Sub</th><th>Tag</th>
+        <th>Date</th><th>Total</th><th>Cost</th><th>Fee</th><th>Profit</th><th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in sales %}
+      <tr>
+        <td>{{ s.product }}</td>
+        <td>{{ s.flash }}</td>
+        <td>{{ s.install }}</td>
+        <td>{{ s.sub }}</td>
+        <td>{{ s.tag }}</td>
+        <td>{{ s.timestamp }}</td>
+        <td>${{ s.total }}</td>
+        <td>${{ s.cost }}</td>
+        <td>${{ s.fee }}</td>
+        <td>${{ s.profit }}</td>
+        <td>
+          <form method="POST" action="/delete/{{ loop.index0 }}">
+            <button type="submit">🗑</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="summary">
+    Ganancias: ${{ total_profit }} | Ingresos: ${{ total_income }} | Costos: ${{ total_cost }}
+  </div>
+
+  <a href="/export" class="export">⬇ Exportar CSV</a>
+</body>
+</html>
