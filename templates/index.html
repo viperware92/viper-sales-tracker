@@ -43,45 +43,21 @@
       </div>
     </div>
 
-    <!-- Formulario para añadir nueva venta -->
+    <!-- Formulario -->
     <div class="bg-gray-800 p-6 rounded-xl shadow mt-10 max-w-2xl mx-auto">
       <h2 class="text-xl font-semibold mb-4" data-lang="es">Añadir nueva venta</h2>
       <h2 class="text-xl font-semibold mb-4" style="display:none" data-lang="en">Add new sale</h2>
       <form action="/add" method="POST" class="space-y-4">
-        <div>
-          <label class="block text-sm text-gray-300 mb-1" data-lang="es">Product ($)</label>
-          <label class="block text-sm text-gray-300 mb-1" style="display:none" data-lang="en">Product ($)</label>
-          <input type="number" name="product" step="0.01" required class="w-full p-2 bg-gray-700 text-white rounded border border-gray-600">
-        </div>
-
-        <div>
-          <label class="block text-sm text-gray-300 mb-1">Flash ($)</label>
-          <input type="number" name="flash" step="0.01" required class="w-full p-2 bg-gray-700 text-white rounded border border-gray-600">
-        </div>
-
-        <div>
-          <label class="block text-sm text-gray-300 mb-1" data-lang="es">Cantidad</label>
-          <label class="block text-sm text-gray-300 mb-1" style="display:none" data-lang="en">Quantity</label>
-          <input type="number" name="cantidad" min="1" value="1" required class="w-full p-2 bg-gray-700 text-white rounded border border-gray-600">
-        </div>
-
-        <div>
-          <label class="block text-sm text-gray-300 mb-1">Install ($)</label>
-          <input type="number" name="install" step="0.01" required class="w-full p-2 bg-gray-700 text-white rounded border border-gray-600">
-        </div>
-
+        <input name="product" placeholder="Venta ($)" type="number" step="0.01" required class="w-full p-2 bg-gray-700 text-white rounded border border-gray-600">
+        <input name="flash" placeholder="Flash ($)" type="number" step="0.01" required class="w-full p-2 bg-gray-700 text-white rounded border border-gray-600">
+        <input name="cantidad" placeholder="Cantidad" type="number" min="1" value="1" required class="w-full p-2 bg-gray-700 text-white rounded border border-gray-600">
+        <input name="install" placeholder="Instalación ($)" type="number" step="0.01" required class="w-full p-2 bg-gray-700 text-white rounded border border-gray-600">
         <div class="flex items-center">
           <input type="checkbox" name="sub" id="sub" class="mr-2 accent-yellow-400">
           <label for="sub" class="text-sm text-gray-300" data-lang="es">Incluye suscripción</label>
           <label for="sub" class="text-sm text-gray-300" style="display:none" data-lang="en">Includes subscription</label>
         </div>
-
-        <div>
-          <label class="block text-sm text-gray-300 mb-1" data-lang="es">Etiqueta (Tag)</label>
-          <label class="block text-sm text-gray-300 mb-1" style="display:none" data-lang="en">Label (Tag)</label>
-          <input type="text" name="tag" class="w-full p-2 bg-gray-700 text-white rounded border border-gray-600">
-        </div>
-
+        <input name="tag" placeholder="Etiqueta (Tag)" type="text" class="w-full p-2 bg-gray-700 text-white rounded border border-gray-600">
         <button type="submit" class="w-full bg-yellow-400 text-black font-semibold py-2 px-4 rounded hover:bg-yellow-500">
           <span data-lang="es">Añadir venta</span>
           <span data-lang="en" style="display:none">Add sale</span>
@@ -89,37 +65,40 @@
       </form>
     </div>
 
-    <!-- Tabla de ventas -->
+    <!-- Tabla -->
     <div class="overflow-x-auto mt-10">
       <table class="w-full text-sm text-left text-gray-400">
         <thead class="text-xs uppercase bg-gray-700 text-gray-300">
           <tr>
-            <th class="px-4 py-2">Install</th>
-            <th class="px-4 py-2">Sub</th>
-            <th class="px-4 py-2">Tag</th>
-            <th class="px-4 py-2" data-lang="es">Fecha</th>
-            <th class="px-4 py-2" style="display:none" data-lang="en">Date</th>
-            <th class="px-4 py-2">Cantidad</th>
-            <th class="px-4 py-2">Total</th>
-            <th class="px-4 py-2">Costo</th>
-            <th class="px-4 py-2">Fee</th>
-            <th class="px-4 py-2">Ganancia</th>
-            <th class="px-4 py-2">Eliminar</th>
+            <th class="px-2 py-2">Fecha</th>
+            <th class="px-2 py-2">Venta</th>
+            <th class="px-2 py-2">Flash</th>
+            <th class="px-2 py-2">Install</th>
+            <th class="px-2 py-2">Sub</th>
+            <th class="px-2 py-2">Tag</th>
+            <th class="px-2 py-2">Cantidad</th>
+            <th class="px-2 py-2">Total</th>
+            <th class="px-2 py-2">Costo</th>
+            <th class="px-2 py-2">Fee</th>
+            <th class="px-2 py-2">Ganancia</th>
+            <th class="px-2 py-2">Eliminar</th>
           </tr>
         </thead>
         <tbody>
           {% for s in sales %}
           <tr class="bg-gray-800 border-b border-gray-700">
-            <td class="px-4 py-2">{{ s.install }}</td>
-            <td class="px-4 py-2">{{ s.sub }}</td>
-            <td class="px-4 py-2">{{ s.tag }}</td>
-            <td class="px-4 py-2">{{ s.timestamp }}</td>
-            <td class="px-4 py-2">{{ s.cantidad }}</td>
-            <td class="px-4 py-2">{{ s.total }}</td>
-            <td class="px-4 py-2">{{ s.cost }}</td>
-            <td class="px-4 py-2">{{ s.fee }}</td>
-            <td class="px-4 py-2">{{ s.profit }}</td>
-            <td class="px-4 py-2">
+            <td class="px-2 py-2">{{ s.timestamp }}</td>
+            <td class="px-2 py-2">{{ s.venta }}</td>
+            <td class="px-2 py-2">{{ s.flash }}</td>
+            <td class="px-2 py-2">{{ s.install }}</td>
+            <td class="px-2 py-2">{{ s.sub }}</td>
+            <td class="px-2 py-2">{{ s.tag }}</td>
+            <td class="px-2 py-2">{{ s.cantidad }}</td>
+            <td class="px-2 py-2">{{ s.total }}</td>
+            <td class="px-2 py-2">{{ s.cost }}</td>
+            <td class="px-2 py-2">{{ s.fee }}</td>
+            <td class="px-2 py-2">{{ s.profit }}</td>
+            <td class="px-2 py-2">
               <form method="POST" action="/delete/{{ loop.index0 }}">
                 <button type="submit" class="text-red-400 hover:text-red-600">✘</button>
               </form>
@@ -130,7 +109,7 @@
       </table>
     </div>
 
-    <!-- Exportar -->
+    <!-- Export -->
     <div class="text-center mt-10">
       <a href="/export" class="text-yellow-400 hover:underline" data-lang="es">Exportar CSV</a>
       <a href="/export" class="text-yellow-400 hover:underline" style="display:none" data-lang="en">Export CSV</a>
