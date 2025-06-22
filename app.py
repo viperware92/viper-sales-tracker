@@ -1,5 +1,5 @@
 # app.py
-from flask import Flask, render_template, request, redirect, send_file, jsonify
+from flask import Flask, render_template, request, redirect, send_file
 from datetime import datetime
 import csv
 import io
@@ -44,7 +44,7 @@ def add():
     venta = venta_unidad * cantidad
     sub_income = sub * precio_sub
     ganancia_sub = sub_income - (sub * costo_sub)
-    fee = 0  # Aquí puedes agregar lógica para fee si es necesario
+    fee = 0
 
     total = venta + flash + install + sub_income
     profit = (venta - (costo_producto * cantidad)) + flash + install + ganancia_sub
@@ -81,17 +81,6 @@ def export():
         writer.writerow([s['product'], s['flash'], s['install'], s['cantidad'], s['sub'], s['tag'], s['timestamp'], s['venta'], s['total'], s['cost'], s['fee'], s['profit'], s['ganancia_sub']])
     output.seek(0)
     return send_file(io.BytesIO(output.getvalue().encode()), mimetype='text/csv', as_attachment=True, download_name='ventas.csv')
-
-@app.route("/chart-data")
-def chart_data():
-    chart_dict = defaultdict(float)
-    for s in sales:
-        fecha = s['timestamp'].split()[0]
-        chart_dict[fecha] += s['profit']
-    sorted_data = sorted(chart_dict.items())
-    labels = [item[0] for item in sorted_data]
-    values = [round(item[1], 2) for item in sorted_data]
-    return jsonify({"labels": labels, "data": values})
 
 if __name__ == "__main__":
     app.run(debug=True)
