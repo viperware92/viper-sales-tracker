@@ -4,137 +4,57 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VIPER DMA Sales Tracker</title>
-  <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    function toggleLanguage(lang) {
-      document.querySelectorAll('[data-lang]').forEach(el => {
-        el.style.display = el.getAttribute('data-lang') === lang ? 'block' : 'none';
-      });
-    }
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-900 text-white min-h-screen p-6">
   <div class="max-w-6xl mx-auto space-y-8">
-    <div class="flex justify-between items-center">
-      <h1 class="text-3xl font-bold text-yellow-400">⚡ VIPER DMA SALES TRACKER</h1>
-      <select onchange="toggleLanguage(this.value)" class="bg-gray-800 text-white p-2 rounded">
-        <option value="es">ES</option>
-        <option value="en">EN</option>
-      </select>
+    <h1 class="text-3xl font-bold text-yellow-400">⚡ VIPER DMA SALES TRACKER</h1>
+
+    <!-- GRÁFICA -->
+    <div class="bg-gray-800 p-6 rounded-xl shadow">
+      <h2 class="text-xl font-semibold mb-4">📈 Ganancias por día</h2>
+      <canvas id="profitChart" height="100"></canvas>
     </div>
 
-    <!-- Summary -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <div class="bg-gray-800 p-4 rounded-xl shadow text-center">
-        <p class="text-sm text-gray-400" data-lang="es">Ganancias</p>
-        <p class="text-sm text-gray-400" style="display:none" data-lang="en">Profit</p>
-        <p class="text-2xl font-semibold text-yellow-300">${{ total_profit }}</p>
-      </div>
-      <div class="bg-gray-800 p-4 rounded-xl shadow text-center">
-        <p class="text-sm text-gray-400" data-lang="es">Ingresos</p>
-        <p class="text-sm text-gray-400" style="display:none" data-lang="en">Income</p>
-        <p class="text-2xl font-semibold text-green-400">${{ total_income }}</p>
-      </div>
-      <div class="bg-gray-800 p-4 rounded-xl shadow text-center">
-        <p class="text-sm text-gray-400" data-lang="es">Costos</p>
-        <p class="text-sm text-gray-400" style="display:none" data-lang="en">Costs</p>
-        <p class="text-2xl font-semibold text-red-400">${{ total_cost }}</p>
-      </div>
-    </div>
+    <!-- Aquí va tu contenido anterior, como el formulario y la tabla de ventas -->
+    <!-- ... -->
 
-    <!-- Formulario para añadir nueva venta -->
-    <div class="bg-gray-800 p-6 rounded-xl shadow mt-10 max-w-2xl mx-auto">
-      <h2 class="text-xl font-semibold mb-4" data-lang="es">Añadir nueva venta</h2>
-      <h2 class="text-xl font-semibold mb-4" style="display:none" data-lang="en">Add new sale</h2>
-      <form action="/add" method="POST" class="space-y-4">
-        <div>
-          <label class="block text-sm text-gray-300 mb-1" data-lang="es">Producto ($)</label>
-          <label class="block text-sm text-gray-300 mb-1" style="display:none" data-lang="en">Product ($)</label>
-          <input type="number" name="product" step="0.01" required class="w-full p-2 bg-gray-700 text-white rounded border border-gray-600">
-        </div>
-
-        <div>
-          <label class="block text-sm text-gray-300 mb-1">Flash ($)</label>
-          <input type="number" name="flash" step="0.01" required class="w-full p-2 bg-gray-700 text-white rounded border border-gray-600">
-        </div>
-
-        <div>
-          <label class="block text-sm text-gray-300 mb-1" data-lang="es">Cantidad</label>
-          <label class="block text-sm text-gray-300 mb-1" style="display:none" data-lang="en">Quantity</label>
-          <input type="number" name="cantidad" min="1" value="1" required class="w-full p-2 bg-gray-700 text-white rounded border border-gray-600">
-        </div>
-
-        <div>
-          <label class="block text-sm text-gray-300 mb-1">Install ($)</label>
-          <input type="number" name="install" step="0.01" required class="w-full p-2 bg-gray-700 text-white rounded border border-gray-600">
-        </div>
-
-        <div class="flex items-center">
-          <input type="checkbox" name="sub" id="sub" class="mr-2 accent-yellow-400">
-          <label for="sub" class="text-sm text-gray-300" data-lang="es">Incluye suscripción</label>
-          <label for="sub" class="text-sm text-gray-300" style="display:none" data-lang="en">Includes subscription</label>
-        </div>
-
-        <div>
-          <label class="block text-sm text-gray-300 mb-1" data-lang="es">Etiqueta (Tag)</label>
-          <label class="block text-sm text-gray-300 mb-1" style="display:none" data-lang="en">Label (Tag)</label>
-          <input type="text" name="tag" class="w-full p-2 bg-gray-700 text-white rounded border border-gray-600">
-        </div>
-
-        <button type="submit" class="w-full bg-yellow-400 text-black font-semibold py-2 px-4 rounded hover:bg-yellow-500">
-          <span data-lang="es">Añadir venta</span>
-          <span data-lang="en" style="display:none">Add sale</span>
-        </button>
-      </form>
-    </div>
-
-    <!-- Tabla de ventas -->
-    <div class="overflow-x-auto mt-10">
-      <table class="w-full text-sm text-left text-gray-400">
-        <thead class="text-xs uppercase bg-gray-700 text-gray-300">
-          <tr>
-            <th class="px-4 py-2">Producto</th>
-            <th class="px-4 py-2">Flash</th>
-            <th class="px-4 py-2">Install</th>
-            <th class="px-4 py-2">Sub</th>
-            <th class="px-4 py-2">Cantidad</th>
-            <th class="px-4 py-2">Etiqueta</th>
-            <th class="px-4 py-2" data-lang="es">Fecha</th>
-            <th class="px-4 py-2" style="display:none" data-lang="en">Date</th>
-            <th class="px-4 py-2">Total</th>
-            <th class="px-4 py-2 text-green-400">Ganancia limpia</th>
-            <th class="px-4 py-2">Eliminar</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for s in sales %}
-          <tr class="bg-gray-800 border-b border-gray-700">
-            <td class="px-4 py-2">${{ s.venta }}</td>
-            <td class="px-4 py-2">${{ s.flash }}</td>
-            <td class="px-4 py-2">${{ s.install }}</td>
-            <td class="px-4 py-2">{{ s.sub }}</td>
-            <td class="px-4 py-2">{{ s.cantidad }}</td>
-            <td class="px-4 py-2">{{ s.tag }}</td>
-            <td class="px-4 py-2">{{ s.timestamp }}</td>
-            <td class="px-4 py-2">${{ s.total }}</td>
-            <td class="px-4 py-2 font-semibold text-green-400">${{ s.profit }}</td>
-            <td class="px-4 py-2">
-              <form method="POST" action="/delete/{{ loop.index0 }}">
-                <button type="submit" class="text-red-400 hover:text-red-600">✘</button>
-              </form>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Exportar -->
-    <div class="text-center mt-10">
-      <a href="/export" class="text-yellow-400 hover:underline" data-lang="es">Exportar CSV</a>
-      <a href="/export" class="text-yellow-400 hover:underline" style="display:none" data-lang="en">Export CSV</a>
-    </div>
+    <script>
+      fetch('/chart-data')
+        .then(res => res.json())
+        .then(data => {
+          const ctx = document.getElementById('profitChart').getContext('2d');
+          new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: data.labels,
+              datasets: [{
+                label: 'Ganancias ($)',
+                data: data.data,
+                borderColor: '#facc15',
+                backgroundColor: '#fde68a44',
+                tension: 0.3,
+                fill: true
+              }]
+            },
+            options: {
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              },
+              plugins: {
+                legend: {
+                  labels: {
+                    color: 'white'
+                  }
+                }
+              }
+            }
+          });
+        });
+    </script>
   </div>
 </body>
 </html>
