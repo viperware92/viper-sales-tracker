@@ -1,60 +1,44 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VIPER DMA Sales Tracker</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body class="bg-gray-900 text-white min-h-screen p-6">
-  <div class="max-w-6xl mx-auto space-y-8">
-    <h1 class="text-3xl font-bold text-yellow-400">⚡ VIPER DMA SALES TRACKER</h1>
-
-    <!-- GRÁFICA -->
-    <div class="bg-gray-800 p-6 rounded-xl shadow">
-      <h2 class="text-xl font-semibold mb-4">📈 Ganancias por día</h2>
-      <canvas id="profitChart" height="100"></canvas>
-    </div>
-
-    <!-- Aquí va tu contenido anterior, como el formulario y la tabla de ventas -->
-    <!-- ... -->
-
-    <script>
-      fetch('/chart-data')
-        .then(res => res.json())
-        .then(data => {
-          const ctx = document.getElementById('profitChart').getContext('2d');
-          new Chart(ctx, {
-            type: 'line',
-            data: {
-              labels: data.labels,
-              datasets: [{
-                label: 'Ganancias ($)',
-                data: data.data,
-                borderColor: '#facc15',
-                backgroundColor: '#fde68a44',
-                tension: 0.3,
-                fill: true
-              }]
-            },
-            options: {
-              scales: {
-                y: {
-                  beginAtZero: true
-                }
-              },
-              plugins: {
-                legend: {
-                  labels: {
-                    color: 'white'
-                  }
-                }
-              }
-            }
-          });
-        });
-    </script>
-  </div>
-</body>
-</html>
+<table>
+  <thead>
+    <tr>
+      <th>PRODUCT</th>
+      <th>FLASH</th>
+      <th>INSTALL</th>
+      <th>SUB</th>
+      <th>TAG</th>
+      <th>DATE</th>
+      <th>CANTIDAD</th>
+      <th>VENTA</th>
+      <th>TOTAL</th>
+      <th>COSTO</th>
+      <th>FEE</th>
+      <th>SUB PROFIT</th>
+      <th>GANANCIA</th>
+      <th>ELIMINAR</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for s in sales %}
+    <tr>
+      <td>{{ s.product }}</td>
+      <td>{{ s.flash }}</td>
+      <td>{{ s.install }}</td>
+      <td>{{ s.sub }}</td>
+      <td>{{ s.tag }}</td>
+      <td>{{ s.timestamp }}</td>
+      <td>{{ s.cantidad }}</td>
+      <td>{{ s.venta }}</td>
+      <td>{{ s.total }}</td>
+      <td>{{ s.cost }}</td>
+      <td>{{ s.fee }}</td>
+      <td>{{ s.ganancia_sub }}</td>
+      <td>{{ s.profit }}</td>
+      <td>
+        <form action="/delete/{{ loop.index0 }}" method="POST">
+          <button class="delete-btn" type="submit">❌</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
